@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct EventsView: View {
-    @StateObject var viewModel = EventsViewModel()
+    @EnvironmentObject private var viewModel: EventsViewModel
     
     var body: some View {
         NavigationView {
@@ -17,11 +17,14 @@ struct EventsView: View {
                                 
                 if !viewModel.events.isEmpty {
                     ScrollView(.vertical, showsIndicators: false) {
-                        ForEach(viewModel.events, id: \.self.id) { event in
-                            EventItem(eventInfos: event)
-                                .onAppear(perform: {
-                                    print("Event Detail: \(event.name) - \(event.deliveryLinks ?? "") - \(event.supportMaterial ?? [])")
-                                })
+                        VStack(spacing: 25){
+                            ForEach(viewModel.events, id: \.self.id) { event in
+                                EventItem(
+                                    eventInfos: event,
+                                    isNew: viewModel.isNew(event),
+                                    openEventDetail: { viewModel.markAsSeen(event) }
+                                )
+                            }
                         }
                     }
                 } else {
@@ -51,9 +54,7 @@ struct EventsView: View {
                 viewModel.fetchEvents()
             }
             .navigationTitle("Eventos")
-            .onAppear {
-                viewModel.fetchEvents()
-            }
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
         
     }

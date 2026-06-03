@@ -70,23 +70,29 @@ class DropboxService {
         request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
         
         let uniqueFileName = "\(UUID().uuidString)_\(fileName)"
-        let fullPath = "/\(Date.classDurationInYears())/\(studentName)-\(studentId)/\(uniqueFileName)"
-        
+
+        let sanitizedName = studentName.trimingWhitespaces()
+        let fullPath = "/\(Date.classDurationInYears())/\(sanitizedName)-\(studentId)/\(uniqueFileName)"
+
         let args: [String: Any] = [
             "path": fullPath,
             "mode": "add",
             "autorename": true,
             "mute": false
         ]
-        
+
         if let jsonData = try? JSONSerialization.data(withJSONObject: args, options: []),
-            let jsonString = String(data: jsonData, encoding: .utf8) {
-                request.setValue(jsonString, forHTTPHeaderField: "Dropbox-API-Arg")
+           let jsonString = String(data: jsonData, encoding: .utf8) {
+               request.setValue(jsonString, forHTTPHeaderField: "Dropbox-API-Arg")
         }
         
         request.httpBody = data
         
         URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse {
+                print("Status code: \(httpResponse.statusCode)")
+            }
+            
             guard let data = data, error == nil else {
                 completion(nil)
                 return

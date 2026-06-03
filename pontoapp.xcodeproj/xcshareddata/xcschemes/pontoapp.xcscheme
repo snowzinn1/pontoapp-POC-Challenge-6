@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "570E12C22CDAD00300A4C012"
-               BuildableName = "pontoapp.app"
-               BlueprintName = "pontoapp"
+               BuildableName = "Stemp.app"
+               BlueprintName = "Stemp"
                ReferencedContainer = "container:pontoapp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "570E12C22CDAD00300A4C012"
-            BuildableName = "pontoapp.app"
-            BlueprintName = "pontoapp"
+            BuildableName = "Stemp.app"
+            BlueprintName = "Stemp"
             ReferencedContainer = "container:pontoapp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "570E12C22CDAD00300A4C012"
-            BuildableName = "pontoapp.app"
-            BlueprintName = "pontoapp"
+            BuildableName = "Stemp.app"
+            BlueprintName = "Stemp"
             ReferencedContainer = "container:pontoapp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

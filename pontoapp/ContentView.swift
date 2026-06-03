@@ -117,6 +117,7 @@ struct ContentView: View {
 // MARK: - AppTabBarView (sem alterações)
 struct AppTabBarView: View {
     @EnvironmentObject private var registrationViewModel: RegistrationViewModel
+    @EnvironmentObject private var eventsViewModel: EventsViewModel
 
     var body: some View {
         TabView {
@@ -138,11 +139,14 @@ struct AppTabBarView: View {
                 }
 
             EventsView()
+                .badge(eventsViewModel.newEventsCount)
+                .environmentObject(eventsViewModel)
                 .toolbarColorScheme(.dark, for: .navigationBar)
                 .tabItem {
                     Image(systemName: "star.fill")
                     Text("Eventos")
                 }
+            
             NavigationStack{
                 SettingsView()
             }
@@ -153,6 +157,7 @@ struct AppTabBarView: View {
             }
         }
         .accentColor(Color.gradientStart)
+        .preferredColorScheme(.dark)
     }
 }
 

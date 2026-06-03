@@ -23,6 +23,7 @@ struct RegisterView: View {
     @EnvironmentObject private var viewModel: RegistrationViewModel
     @ObservedObject var locationManager = LocationManager.shared
     @ObservedObject var beaconManager = BeaconManager.shared
+    @ObservedObject var bluetoothManager = BluetoothManager.shared
     @StateObject var profileController = ProfileController()
     
     private var profileImage: Image? {
@@ -40,6 +41,10 @@ struct RegisterView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color.bg950)
                 .disabled(tutorialVisible)
+                .onAppear{
+                    print("VALOR DO HASCOMPLETEDTUTORIAL: \(hasCompletedTutorial)")
+                    print("SLIDER FRAME É IGUAL A ZERO? \(sliderFrame == .zero)")
+                }
                                 
                 if !hasCompletedTutorial && sliderFrame != .zero {
                     OnboardingOverlayView(
@@ -48,39 +53,40 @@ struct RegisterView: View {
                     )
                 }
             }
+            .coordinateSpace(name: "registerView")
             .toolbar(tutorialVisible ? .hidden : .visible, for: .tabBar)
             .onChange(of: hasCompletedTutorial) {
-                // Delay igual ao da animação de saída do overlay (0.5s)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                     withAnimation(.easeOut(duration: 0.4)) {
                         tutorialVisible = false
                     }
                 }
             }
-            .coordinateSpace(name: "registerView")
-            .onPreferenceChange(SliderFramePreferenceKey.self) { frame in
-                print("📍 Slider frame: \(frame)")
-                sliderFrame = frame
-            }
             .navigationTitle("Registros")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .navigationDestination(isPresented: $justifyLate) {
                 JustifyView(titleText: "Justificar Atraso", subtitleText: "Motivo de seu atraso:") { text, files in
-                    viewModel.requestCheckIn(studentId: studentId, status: .lated, location: locationManager.userLocation, justifyText: text, files: files)
-                    
-//                    let today = Date.now
-//                    viewModel.getCalendarInfos(month: today.month, year: today.year)
+                    viewModel.requestCheckIn(
+                        studentId: studentId,
+                        status: .lated,
+                        location: locationManager.userLocation,
+                        justifyText: text,
+                        files: files
+                    )
                     
                     justifyLate = false
                 }
             }
             .navigationDestination(isPresented: $justifyAbstence) {
                 JustifyView(titleText: "Justificar Ausência", subtitleText: "Motivo de sua ausência:") { text, files in
-                    viewModel.requestCheckIn(studentId: studentId, status: .absent, location: locationManager.userLocation, justifyText: text, files: files)
-                    
-//                    let today = Date.now
-//                    viewModel.getCalendarInfos(month: today.month, year: today.year)
+                    viewModel.requestCheckIn(
+                        studentId: studentId,
+                        status: .absent,
+                        location: locationManager.userLocation,
+                        justifyText: text,
+                        files: files
+                    )
                     
                     justifyAbstence = false
                 }
@@ -103,6 +109,17 @@ struct RegisterView: View {
             } message: {
                 Text("Você parece estar fora da Apple Developer Academy. Deseja registrar o ponto mesmo assim?")
             }
+            .alert("Bluetooth Desligado", isPresented: $viewModel.showBluetoothAlert){
+                Button("Abrir Ajustes") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                
+                Button("Cancelar", role: .cancel) { }
+            } message: {
+                Text("Para você poder bater seu ponto, o seu Bluetooth deve estar ligado.")
+            }
             .onAppear {
                 viewModel.resetToCurrentMonth()
                 beaconManager.startMonitoring()
@@ -116,7 +133,8 @@ struct RegisterView: View {
             
             CalendarView(
                 currentDate: $viewModel.currentCalendarDate,
-                daysCheckedIn: $viewModel.calendarStatus, daysWithEvents: $viewModel.daysWithEvents) { month, year in
+                daysCheckedIn: $viewModel.calendarStatus,
+                daysWithEvents: $viewModel.daysWithEvents) { month, year in
                     viewModel.getCalendarInfos(month: month, year: year)
                 } onDateSelected: { date in
                     viewModel.fetchDayDetail(date: date)
@@ -141,6 +159,7 @@ struct RegisterView: View {
                 checkInContent
             }
             .layoutPriority(1)
+            .padding(.bottom, tutorialVisible ? 150 : 0)
             .onAppear {
                 Task { await viewModel.loadCheckInWindowState() }
             }
@@ -159,8 +178,14 @@ struct RegisterView: View {
             
         } else if !hasCompletedFirstCheckIn || viewModel.checkInWindowState == .open {
             PresenceSlider(profileImage: profileImage, onSwipeRight: {
+                guard bluetoothManager.isBluetoothTurnedOn else {
+                    viewModel.showBluetoothAlert = true
+                    return
+                }
+                
                 LocalAuthService().authorizeUser { authenticated in
                     guard authenticated else { return }
+                    
                     Task {
                         let result = await viewModel.validateWithServerTime()
                         await MainActor.run {
@@ -207,9 +232,6 @@ struct RegisterView: View {
                                 viewModel.errorMessage = "Erro ao verificar horário. Verifique sua conexão."
                                 viewModel.showError = true
                             }
-
-//                            let today = Date.now
-//                            viewModel.getCalendarInfos(month: today.month, year: today.year)
                         }
                     }
                 }
@@ -219,16 +241,14 @@ struct RegisterView: View {
                     justifyAbstence = true
                 }
             })
-            .overlay(
-                GeometryReader { proxy in
-                    Color.clear
-                        .preference(
-                            key: SliderFramePreferenceKey.self,
-                            value: proxy.frame(in: .named("registerView"))
-                        )
-                }
-            )
-            .padding(.bottom, tutorialVisible ? 70 : 0)
+            .onGeometryChange(for: CGRect.self) { proxy in
+                proxy.frame(in: .named("registerView"))
+            } action: { newFrame in
+                print("📍 Slider frame: \(newFrame)")
+                guard newFrame != .zero else { return }
+                sliderFrame = newFrame
+            }
+            //.padding(.bottom, tutorialVisible ? 70 : 0)
             .layoutPriority(1)
             
         } else {

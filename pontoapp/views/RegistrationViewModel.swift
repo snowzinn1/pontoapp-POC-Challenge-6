@@ -35,6 +35,7 @@ class RegistrationViewModel: ObservableObject {
     @Published var isLoadingDayDetail: Bool = false
     @Published var daysWithEvents: [Int] = []
     @Published var checkInWindowState: CheckInWindowState = .loading
+    @Published var showBluetoothAlert: Bool = false
         
     @Published var isLoadingCalendar: Bool = false
     @Published var currentCalendarDate: Date = Date()
@@ -235,6 +236,7 @@ class RegistrationViewModel: ObservableObject {
     
     func requestCheckIn(studentId: String, status: RecordStatus, location: CLLocation?, justifyText: String? = nil, files: [URL]? = nil) {
         guard !isCheckedInToday else { return }
+        
         isCheckedInToday = true
         
         let isInsideAcademy = BeaconManager.shared.isInsideAcademy

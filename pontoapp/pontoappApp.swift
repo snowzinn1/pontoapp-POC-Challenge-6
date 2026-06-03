@@ -14,13 +14,20 @@ struct PontoApp: App {
     @State private var contentOpacity: Double = 0
 
     @StateObject private var registrationViewModel = RegistrationViewModel()
+    @StateObject private var eventsViewModel = EventsViewModel()
 
+    init(){
+        //para inicializar o bluetoothManager antes de iniciar o app
+        _ = BluetoothManager.shared
+    }
+    
     var body: some Scene {
         WindowGroup {
             ZStack {
                 // ContentView faz fade in enquanto splash sai
                 ContentView()
                     .environmentObject(registrationViewModel)
+                    .environmentObject(eventsViewModel)
                     .opacity(contentOpacity)
 
                 if showSplash {

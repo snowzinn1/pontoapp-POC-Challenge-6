@@ -87,7 +87,7 @@ struct OnboardingOverlayView: View {
             ZStack {
                 Capsule()
                     .fill(Color.white.opacity(0.15))
-                    .frame(width: 370, height: 80)
+                    .frame(width: sliderFrame.width, height: sliderFrame.height)
                     .overlay(
                         Capsule()
                             .strokeBorder(Color.white.opacity(0.3), lineWidth: 1.5)
@@ -104,7 +104,7 @@ struct OnboardingOverlayView: View {
                             .foregroundColor(.white.opacity(0.75))
                     }
                 }
-                .frame(width: 360, height: 70)
+                .frame(width: sliderFrame.width - 10, height: sliderFrame.height)
                 
                 // Ícone esquerda
                 HStack {
@@ -117,7 +117,7 @@ struct OnboardingOverlayView: View {
                     }
                     Spacer()
                 }
-                .frame(width: 360, height: 70)
+                .frame(width: sliderFrame.width - 10, height: sliderFrame.height)
                 
                 // Mão animada
                 ZStack {
@@ -137,7 +137,7 @@ struct OnboardingOverlayView: View {
                 .offset(x: handOffset)
                 .opacity(handOpacity)
             }
-            .position(x: sliderMidX, y: sliderMidY + 32)
+            .position(x: sliderFrame.midX, y: sliderFrame.midY)
             
             // Botão abaixo do slider
             YellowButtonView(
@@ -148,8 +148,8 @@ struct OnboardingOverlayView: View {
                 handleNextStep()
             }
             .padding(.horizontal, 24)
-            .position(x: sliderMidX, y: sliderMidY + 120)
-            
+            .position(x: sliderFrame.midX, y: sliderFrame.midY + 100)
+
         }
         .opacity(isExiting ? 0 : 1)
         .scaleEffect(isExiting ? 0.92 : 1)

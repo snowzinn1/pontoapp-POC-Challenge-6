@@ -24,12 +24,14 @@ struct NextEventCard: View {
             
             HStack(spacing: 12) {
                 RoundedRectangle(cornerRadius: 6)
-                    .fill(Color(hex: event.colorHex ?? "#4067D0").opacity(0.15))
+                    .fill(Color(hex: event.colorHex).opacity(0.15))
                     .frame(width: 44, height: 44)
                     .overlay(
                         Image(systemName: event.icon)
-                            .font(.system(size: 18))
-                            .foregroundColor(Color(hex: event.colorHex ?? "#4067D0"))
+                            .font(.title2)
+                            .symbolRenderingMode(.monochrome)
+                            .symbolEffect(.wiggle, options: .nonRepeating)
+                            .foregroundColor(Color(hex: event.colorHex))
                     )
 
                 VStack(alignment: .leading, spacing: 3) {
@@ -65,8 +67,18 @@ struct NextEventCard: View {
 
     }
 }
+
 #Preview {
-    let event = EventDetail(id: "1", name: "Challenge", time: Date.now, icon: "star.fill", colorHex: "#4067D0", description: "Lorem Ipsum", supportMaterial: [], deliveryLinks: "teste")
+    let event = EventDetail(
+        id: "1",
+        name: "Challenge",
+        typeEvent: "Challenge",
+        time: Date.now,
+        icon: "star.fill",
+        colorHex: "#4067D0",
+        description: "Lorem Ipsum",
+        supportMaterial: [],
+        deliverableLinks: "teste")
     
     ZStack {
         Color.bg950.ignoresSafeArea()

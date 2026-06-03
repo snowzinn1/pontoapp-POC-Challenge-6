@@ -32,7 +32,7 @@ class WebService: ObservableObject {
         print("APPLEID - \(appleID)")
         print("EMAIL - \(email)")
         
-        fetchStudentExistence(appleUserID: appleID) { [weak self] result in
+        fetchStudentExistence(appleUserID: appleID, appleEmail: email) { [weak self] result in
             guard let self = self else { return }
             
             switch result {
@@ -61,13 +61,37 @@ class WebService: ObservableObject {
         }
     }
     
-    func fetchStudentExistence(appleUserID: String, completion: @escaping (Result<String?, Error>) -> Void) {
+    func updateStudentAppleID(recordId: String, appleID: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        guard let url = URL(string: "\(self.urlStudentsTable)/\(recordId)") else {
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "URL inválida"])))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        
+        let body: [String: Any] = ["fields": ["AppleID": appleID]]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error { completion(.failure(error)); return }
+            guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+                completion(.failure(NSError(domain: "APIError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Erro ao atualizar AppleID"])))
+                return
+            }
+            completion(.success(true))
+        }.resume()
+    }
+    
+    func fetchStudentExistence(appleUserID: String, appleEmail: String, completion: @escaping (Result<String?, Error>) -> Void) {
         guard var components = URLComponents(string: self.urlStudentsTable) else {
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "URL base inválida"])))
             return
         }
         
-        let formula = "{AppleID} = '\(appleUserID)'"
+        let formula = "OR({AppleID} = '\(appleUserID)', {Email} = '\(appleEmail)')"
         components.queryItems = [
             URLQueryItem(name: "filterByFormula", value: formula)
         ]
@@ -116,6 +140,13 @@ class WebService: ObservableObject {
                         
                         if let firstRecord = records.first, let recordId = firstRecord["id"] as? String {
                             
+                            let fields = firstRecord["fields"] as? [String: Any]
+                            let savedAppleID = fields?["AppleID"] as? String ?? ""
+
+                            if savedAppleID.isEmpty {
+                                self.updateStudentAppleID(recordId: recordId, appleID: appleUserID) { _ in }
+                            }
+
                             completion(.success(recordId))
                         } else {
                             completion(.success(nil))
@@ -421,6 +452,7 @@ class WebService: ObservableObject {
                 do {
                     let response = try JSONDecoder().decode(AirtableEventDetailResponse.self, from: data)
 
+                    print(response)
                     let timeFmt = DateFormatter()
                     timeFmt.dateFormat = "HH:mm"
                     let isoFmt = ISO8601DateFormatter()
@@ -428,15 +460,17 @@ class WebService: ObservableObject {
 
                     let events: [EventDetail] = response.records.compactMap { record in
                         guard let eventDate = isoFmt.date(from: record.fields.datetime) else { return nil }
+                        
                         return EventDetail(
-                            id:       record.id,
-                            name:     record.fields.name,
-                            time:     eventDate,
-                            icon:     record.fields.icon ?? "calendar",
-                            colorHex: record.fields.colorHex,
-                            description:     record.fields.description,
+                            id: record.id,
+                            name: record.fields.name,
+                            typeEvent: record.fields.typeEvent.first!,
+                            time: eventDate,
+                            icon: record.fields.icon.first!,
+                            colorHex: record.fields.colorHex.first!,
+                            description: record.fields.description,
                             supportMaterial: record.fields.supportMaterial,
-                            deliveryLinks:   record.fields.deliveryLinks
+                            deliverableLinks: record.fields.deliverableLinks
                         )
                     }
 
@@ -496,14 +530,15 @@ class WebService: ObservableObject {
                 let events: [EventDetail] = response.records.compactMap { record in
                     guard let eventDate = isoFmt.date(from: record.fields.datetime) else { return nil }
                     return EventDetail(
-                        id: record.id,
+                        id: record.fields.recordId,
                         name: record.fields.name,
+                        typeEvent: record.fields.typeEvent.first!,
                         time: eventDate,
-                        icon: record.fields.icon ?? "calendar",
-                        colorHex: record.fields.colorHex,
+                        icon: record.fields.icon.first!,
+                        colorHex: record.fields.colorHex.first!,
                         description: record.fields.description,
                         supportMaterial: record.fields.supportMaterial,
-                        deliveryLinks: record.fields.deliveryLinks
+                        deliverableLinks: record.fields.deliverableLinks
                     )
                 }
                 completion(.success(events))
@@ -513,13 +548,33 @@ class WebService: ObservableObject {
         }.resume()
     }
     
+    func fetchSummaryDebug(completion: @escaping (Result<SummaryDetailFields, Error>) -> Void) {
+        guard let url = URL(string: self.urlSummaryTable) else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data, let raw = String(data: data, encoding: .utf8) {
+                print("📦 RESPOSTA CRUA DO AIRTABLE:")
+                print(raw)
+            }
+        }.resume()
+    }
+    
     func fetchSummary(studentId: String, completion: @escaping (Result<SummaryDetailFields, Error>) -> Void) {
+        fetchSummaryDebug(){ teste in
+            print(teste)
+        }
+        
         guard var components = URLComponents(string: self.urlSummaryTable) else {
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "URL base inválida"])))
             return
         }
         
-        let formula = "{Record ID (from student)} = '\(studentId)'"
+        let formula = "ARRAYJOIN({Record ID (from student)}) = '\(studentId)'"
         components.queryItems = [
             URLQueryItem(name: "filterByFormula", value: formula)
         ]
@@ -626,3 +681,4 @@ class WebService: ObservableObject {
         }.resume()
     }
 }
+

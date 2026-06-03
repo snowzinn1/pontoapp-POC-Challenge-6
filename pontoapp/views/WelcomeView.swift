@@ -40,7 +40,7 @@ struct WelcomeView: View {
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
 
-                        Text("Apple Developer Academy - Senac")
+                        Text("Apple Developer Academy | Senac")
                             .font(.system(size: 13, weight: .regular))
                             .tracking(1)
                             .foregroundColor(.white.opacity(0.4))

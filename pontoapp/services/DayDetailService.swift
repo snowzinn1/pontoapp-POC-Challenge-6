@@ -36,29 +36,33 @@ struct EventDetailRecord: Decodable{
     let fields: EventDetailFields
 }
 
-struct AirtableAttachment: Decodable {
+struct AirtableAttachment: Codable {
     let id: String
     let url: String
     let filename: String
 }
 
 struct EventDetailFields: Decodable{
+    let recordId: String
     let name: String
+    let typeEvent: [String]
     let datetime: String
-    let icon: String?
-    let colorHex: String?
+    let icon: [String]
+    let colorHex: [String]
     let description: String?
     let supportMaterial: [AirtableAttachment]?
-    let deliveryLinks: String?
+    let deliverableLinks: String?
 
     enum CodingKeys: String, CodingKey {
+        case recordId = "Record ID"
         case name     = "Name"
+        case typeEvent = "Type Event"
         case datetime = "Datetime"
         case icon     = "Icon"
         case colorHex = "Color"
         case description     = "Descrição"
         case supportMaterial = "Material de Apoio"
-        case deliveryLinks   = "Links Entregaveis"
+        case deliverableLinks   = "Deliverable Links"
     }
 }
 
@@ -181,12 +185,13 @@ extension WebService{
                         return EventDetail(
                             id:       record.id,
                             name:     record.fields.name,
+                            typeEvent: record.fields.typeEvent.first!,
                             time:     eventDate,
-                            icon:     record.fields.icon ?? "calendar",
-                            colorHex: record.fields.colorHex,
+                            icon:     record.fields.icon.first!,
+                            colorHex: record.fields.colorHex.first!,
                             description:     record.fields.description,
                             supportMaterial: record.fields.supportMaterial,
-                            deliveryLinks:   record.fields.deliveryLinks                            
+                            deliverableLinks:   record.fields.deliverableLinks
                         )
                     }
 

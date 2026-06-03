@@ -7,16 +7,24 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		570E12C32CDAD00300A4C012 /* pontoapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pontoapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		570E12C32CDAD00300A4C012 /* Stemp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stemp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D32084252FA318E900699195 /* StempTV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StempTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		571C198F2CDD3F5E0027CF54 /* Exceptions for "pontoapp" folder in "pontoapp" target */ = {
+		571C198F2CDD3F5E0027CF54 /* Exceptions for "pontoapp" folder in "Stemp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 570E12C22CDAD00300A4C012 /* pontoapp */;
+			target = 570E12C22CDAD00300A4C012 /* Stemp */;
+		};
+		D32084682FA3208200699195 /* Exceptions for "StempTV" folder in "StempTV" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D32084242FA318E900699195 /* StempTV */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -24,15 +32,30 @@
 		570E12C52CDAD00300A4C012 /* pontoapp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				571C198F2CDD3F5E0027CF54 /* Exceptions for "pontoapp" folder in "pontoapp" target */,
+				571C198F2CDD3F5E0027CF54 /* Exceptions for "pontoapp" folder in "Stemp" target */,
 			);
 			path = pontoapp;
+			sourceTree = "<group>";
+		};
+		D32084262FA318E900699195 /* StempTV */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D32084682FA3208200699195 /* Exceptions for "StempTV" folder in "StempTV" target */,
+			);
+			path = StempTV;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		570E12C02CDAD00300A4C012 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D32084222FA318E900699195 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -46,6 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				570E12C52CDAD00300A4C012 /* pontoapp */,
+				D32084262FA318E900699195 /* StempTV */,
 				570E12C42CDAD00300A4C012 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -53,7 +77,8 @@
 		570E12C42CDAD00300A4C012 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				570E12C32CDAD00300A4C012 /* pontoapp.app */,
+				570E12C32CDAD00300A4C012 /* Stemp.app */,
+				D32084252FA318E900699195 /* StempTV.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,9 +86,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		570E12C22CDAD00300A4C012 /* pontoapp */ = {
+		570E12C22CDAD00300A4C012 /* Stemp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 570E12D12CDAD00500A4C012 /* Build configuration list for PBXNativeTarget "pontoapp" */;
+			buildConfigurationList = 570E12D12CDAD00500A4C012 /* Build configuration list for PBXNativeTarget "Stemp" */;
 			buildPhases = (
 				570E12BF2CDAD00300A4C012 /* Sources */,
 				570E12C02CDAD00300A4C012 /* Frameworks */,
@@ -76,11 +101,33 @@
 			fileSystemSynchronizedGroups = (
 				570E12C52CDAD00300A4C012 /* pontoapp */,
 			);
-			name = pontoapp;
+			name = Stemp;
 			packageProductDependencies = (
 			);
 			productName = pontoapp;
-			productReference = 570E12C32CDAD00300A4C012 /* pontoapp.app */;
+			productReference = 570E12C32CDAD00300A4C012 /* Stemp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D32084242FA318E900699195 /* StempTV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D320842F2FA318EA00699195 /* Build configuration list for PBXNativeTarget "StempTV" */;
+			buildPhases = (
+				D32084212FA318E900699195 /* Sources */,
+				D32084222FA318E900699195 /* Frameworks */,
+				D32084232FA318E900699195 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D32084262FA318E900699195 /* StempTV */,
+			);
+			name = StempTV;
+			packageProductDependencies = (
+			);
+			productName = StempTV;
+			productReference = D32084252FA318E900699195 /* StempTV.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -90,11 +137,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1610;
+				LastSwiftUpdateCheck = 2640;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					570E12C22CDAD00300A4C012 = {
 						CreatedOnToolsVersion = 16.1;
+					};
+					D32084242FA318E900699195 = {
+						CreatedOnToolsVersion = 26.4.1;
 					};
 				};
 			};
@@ -112,7 +162,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				570E12C22CDAD00300A4C012 /* pontoapp */,
+				570E12C22CDAD00300A4C012 /* Stemp */,
+				D32084242FA318E900699195 /* StempTV */,
 			);
 		};
 /* End PBXProject section */
@@ -125,10 +176,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D32084232FA318E900699195 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		570E12BF2CDAD00300A4C012 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D32084212FA318E900699195 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -275,7 +340,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = pontoapp/pontoapp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"pontoapp/Preview Content\"";
 				DEVELOPMENT_TEAM = 377T5F577W;
 				ENABLE_PREVIEWS = YES;
@@ -291,14 +356,14 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2.4;
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.joaocarloslima.pontoapp2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -321,7 +386,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = pontoapp/pontoapp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"pontoapp/Preview Content\"";
 				DEVELOPMENT_TEAM = 377T5F577W;
 				ENABLE_PREVIEWS = YES;
@@ -337,14 +402,14 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2.4;
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.joaocarloslima.pontoapp2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -354,6 +419,70 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		D320842D2FA318EA00699195 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 377T5F577W;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StempTV/Info.plist;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ericklima.StempTV;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 26.4;
+			};
+			name = Debug;
+		};
+		D320842E2FA318EA00699195 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 377T5F577W;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StempTV/Info.plist;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ericklima.StempTV;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 26.4;
 			};
 			name = Release;
 		};
@@ -369,11 +498,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		570E12D12CDAD00500A4C012 /* Build configuration list for PBXNativeTarget "pontoapp" */ = {
+		570E12D12CDAD00500A4C012 /* Build configuration list for PBXNativeTarget "Stemp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				570E12D22CDAD00500A4C012 /* Debug */,
 				570E12D32CDAD00500A4C012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D320842F2FA318EA00699195 /* Build configuration list for PBXNativeTarget "StempTV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D320842D2FA318EA00699195 /* Debug */,
+				D320842E2FA318EA00699195 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

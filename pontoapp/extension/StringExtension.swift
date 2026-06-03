@@ -11,6 +11,7 @@ extension String {
     func trimingWhitespaces() -> String {
         let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
         let realString = trimmed.split(separator: " ").joined(separator: "-")
-        return realString
+        let realStringWithOutSpecialCharacter = realString.folding(options: .diacriticInsensitive, locale: .current)
+        return realStringWithOutSpecialCharacter
     }
 }

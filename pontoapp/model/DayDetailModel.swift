@@ -21,15 +21,16 @@ struct CheckInDetail {
     let justifyText: String?
 }
 
-struct EventDetail: Identifiable {
+struct EventDetail: Identifiable, Codable {
     let id: String        // record id do Airtable
     let name: String
+    let typeEvent: String
     let time: Date      // "14:00"
     let icon: String      // SF Symbol name
-    let colorHex: String?
+    let colorHex: String
     let description: String?
     let supportMaterial: [AirtableAttachment]?
-    let deliveryLinks: String?
+    let deliverableLinks: String?
     
     var formattedDateTime: String {
         let fmt = DateFormatter()

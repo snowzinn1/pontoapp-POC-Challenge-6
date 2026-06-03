@@ -19,6 +19,14 @@ struct YellowButtonView: View {
             endPoint: .trailing
     )
     
+    private let gradientDisabled: LinearGradient = LinearGradient(gradient: Gradient(
+        colors: [
+            Color.gray.opacity(0.3),
+            Color.gray.opacity(0.3)]),
+            startPoint: .leading,
+            endPoint: .trailing
+    )
+    
     var body: some View {
         Button{
             action()
@@ -31,10 +39,10 @@ struct YellowButtonView: View {
             }
             .font(.system(size: 20))
             .fontWeight(.semibold)
-            .foregroundColor(.black)
+            .foregroundColor(disabled ? .gray : .black)
             .padding()
             .frame(maxWidth: .infinity, minHeight: 50)
-            .background(gradientColors)
+            .background(disabled ? gradientDisabled : gradientColors)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .padding(.horizontal, 20)
 

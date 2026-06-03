@@ -14,6 +14,8 @@ struct JustifyView: View {
     @State private var isImporting: Bool = false
     @State var text: String = ""
     
+    private let characterLimit: Int = 1000
+    
     let gradientColors: LinearGradient = LinearGradient(gradient: Gradient(colors: [.gradientStart, .gradientEnd]), startPoint: .leading, endPoint: .trailing)
     
     @State var selectedFiles: [URL] = []
@@ -22,6 +24,19 @@ struct JustifyView: View {
     
     @FocusState private var isFocused: Bool
     
+    private var counterColor: Color {
+        let remaining = characterLimit - text.count
+        
+        if remaining <= 0 {
+            return .red
+        } else if remaining <= 50 {
+            return .orange
+        } else {
+            return .white.opacity(0.6)
+        }
+    }
+
+    
     var body: some View {
         VStack(spacing: 25){
             Text(titleText)
@@ -29,10 +44,15 @@ struct JustifyView: View {
                 .foregroundStyle(.white)
             
             VStack(alignment: .leading, spacing: 15){
-                Text(subtitleText)
-                    .font(.headline.bold())
-                    .foregroundStyle(.white.opacity(0.6))
-                    .padding(.horizontal, 20)
+                HStack(spacing: 5){
+                    Text("\(subtitleText)")
+                        .font(.headline.bold())
+                        .foregroundStyle(.white.opacity(0.6))
+                    Text("*")
+                        .font(.headline.bold())
+                        .foregroundStyle(.red.opacity(0.6))
+                }
+                .padding(.horizontal, 20)
                 
                 TextEditor(text: $text)
                     .focused($isFocused)
@@ -43,6 +63,36 @@ struct JustifyView: View {
                     .background(.bg900)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .padding(.horizontal, 20)
+                    .onChange(of: text) { _, newValue in
+                        if newValue.count > characterLimit {
+                            text = String(newValue.prefix(characterLimit))
+                        }
+                    }
+                    
+                
+                HStack {
+                    Spacer()
+                    Text("\(text.count)/\(characterLimit)")
+                        .font(.caption)
+                        .foregroundStyle(counterColor)
+                        .contentTransition(.numericText())
+                        .animation(.easeInOut(duration: 0.2), value: text.count)
+                }
+                .padding(.horizontal, 20)
+                
+                HStack(spacing: 5){
+                    Text("*")
+                        .font(.headline.bold())
+                        .foregroundStyle(.red.opacity(0.6))
+                    Text("Campo obrigatório a ser preenchido")
+                        .font(.callout)
+                        .foregroundStyle(counterColor)
+                        .contentTransition(.numericText())
+                        .animation(.easeInOut(duration: 0.2), value: text.count)
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+
             }
             
             Button{
@@ -87,7 +137,7 @@ struct JustifyView: View {
             Spacer()
             
             
-            YellowButtonView(disabled: .constant(false), text: "Enviar para Análise", iconImage: "person.fill.checkmark"){
+            YellowButtonView(disabled: .constant(text.trimmingCharacters(in: .whitespacesAndNewlines).count < 10), text: "Enviar para Análise", iconImage: "person.fill.checkmark"){
                 sendJustify(text, selectedFiles)
             }
             .padding(.bottom, 15)
@@ -100,9 +150,21 @@ struct JustifyView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.bg950)
+        .ignoresSafeArea(.keyboard)
         .onTapGesture {
             isFocused = false
         }
+        .toolbar {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                if isFocused{
+                    Button("Concluir") {
+                        isFocused = false
+                    }
+                    .transition(.opacity.combined(with: .scale(scale: 0.85)))
+                }
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: isFocused)
         .fileImporter(isPresented: $isImporting, allowedContentTypes: [.pdf, .image, .png, .jpeg, .text], allowsMultipleSelection: true){
             result in
             
