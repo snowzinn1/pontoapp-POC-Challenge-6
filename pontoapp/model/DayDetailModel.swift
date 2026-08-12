@@ -13,6 +13,7 @@ struct DayDetail: Identifiable {
     let checkIn: CheckInDetail?
     let events: [EventDetail]
     let holiday: String? // nil = dia normal
+    let vacation: VacationInterval?
 }
 
 struct CheckInDetail {

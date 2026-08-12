@@ -23,6 +23,7 @@ enum CheckInWindowState {
     case closed
 }
 
+@MainActor
 class RegistrationViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
@@ -43,6 +44,27 @@ class RegistrationViewModel: ObservableObject {
 
     @Published var showOutsideAcademyAlert: Bool = false
     private var pendingCheckIn: (() -> Void)?
+    private var isSyncing = false
+    
+    private var serverOffset: TimeInterval = 0
+
+    private let openMinutes:   Int = 13 * 60 + 40   // 13:40
+    private let closeMinutes:  Int = 18 * 60        // 18:00
+    private let onTimeMinutes: Int = 14 * 60 + 20   // 14:20
+
+    private var serverNow: Date {
+        Date().addingTimeInterval(serverOffset)
+    }
+    
+    var referenceDate: Date {
+        Calendar.current.startOfDay(for: serverNow)
+    }
+    
+    private var referenceMinutes: Int {
+        let calendar = Calendar.current
+        return calendar.component(.hour, from: serverNow) * 60
+             + calendar.component(.minute, from: serverNow)
+    }
     
     @AppStorage("pendingSync") private var pendingSync: Bool = false
     
@@ -69,32 +91,53 @@ class RegistrationViewModel: ObservableObject {
     }
     
     func loadCheckInWindowState() async {
-        await MainActor.run { checkInWindowState = .loading }
+        isSyncing = true
+        checkInWindowState = .loading
         
-        guard let serverTime = try? await TimeService.shared.fetchServerTime() else {
-            await MainActor.run { checkInWindowState = isChekInWindowOpen() ? .open : .closed }
-            return
+        await VacationManager.shared.getVacationDates()
+        
+        if let serverTime = try? await TimeService.shared.fetchServerTime() {
+            syncServerOffset(with: serverTime)
         }
         
-        let totalMinutes = serverTime.hour * 60 + serverTime.minute
-        let calendar = Calendar.current
-        guard let serverDate = calendar.date(from: DateComponents(
-            year: serverTime.year, month: serverTime.month, day: serverTime.day
-        )) else { return }
+        isSyncing = false
+        recomputeWindowState()
+    }
+    
+    func recomputeWindowState() {
+        guard !isSyncing else { return }
         
-        let isOpen = isValidDay(serverDate) &&
-                     totalMinutes >= 13 * 60 + 40 &&
-                     totalMinutes <= 18 * 60
-        
-        await MainActor.run {
-            checkInWindowState = isOpen ? .open : .closed
+        let minutes = referenceMinutes
+        let isOpen = isValidDay(referenceDate)
+                  && minutes >= openMinutes
+                  && minutes <  closeMinutes
+
+        let newState: CheckInWindowState = isOpen ? .open : .closed
+        if checkInWindowState != newState {
+            checkInWindowState = newState
         }
+    }
+    
+    private func syncServerOffset(with serverTime: TimeAPIResponse) {
+        var components = DateComponents()
+        components.year   = serverTime.year
+        components.month  = serverTime.month
+        components.day    = serverTime.day
+        components.hour   = serverTime.hour
+        components.minute = serverTime.minute
+
+        guard let serverDate = Calendar.current.date(from: components) else { return }
+        serverOffset = serverDate.timeIntervalSince(Date())
     }
     
     func validateWithServerTime() async -> CheckInWindowResult {
         guard let serverTime = try? await TimeService.shared.fetchServerTime() else {
             return .error
         }
+        
+        await VacationManager.shared.getVacationDates()
+        
+        syncServerOffset(with: serverTime)
         
         let totalMinutes = serverTime.hour * 60 + serverTime.minute
         
@@ -104,24 +147,13 @@ class RegistrationViewModel: ObservableObject {
         )) else { return .error }
         
         guard isValidDay(serverDate) else { return .invalidDay }
-        guard totalMinutes >= 13 * 60 + 40 && totalMinutes <= 18 * 60 else { return .outsideWindow }
+        guard totalMinutes >= openMinutes && totalMinutes <= closeMinutes else { return .outsideWindow }
         
-        return totalMinutes <= 14 * 60 + 20 ? .onTime : .late
+        return totalMinutes <= onTimeMinutes ? .onTime : .late
     }
     
     func isOnTime() -> Bool {
-        let endMinutes: Int = 14 * 60 + 20
-        return Date.getCurrentMinutes() <= endMinutes
-    }
-
-    func isChekInWindowOpen() -> Bool {
-        guard isValidDay(Date()) else { return false }
-        
-        let beginMinutes: Int = 13 * 60 + 40
-        let endMinutes: Int   = 18 * 60
-        let currentMinutes = Date.getCurrentMinutes()
-        
-        return currentMinutes >= beginMinutes && currentMinutes < endMinutes
+        return referenceMinutes <= onTimeMinutes
     }
     
     func isValidDay(_ date: Date) -> Bool{
@@ -130,22 +162,23 @@ class RegistrationViewModel: ObservableObject {
         let month = calendar.component(.month, from: date)
         let year = calendar.component(.year, from: date)
         let key = String(format: "%02d-%02d", day, month)
-        
+
         let isWeekend = calendar.isDateInWeekend(date)
         let isHoliday = HolidayManager.shared.getHolidays(for: year)[key] != nil
+        let isVacation = VacationManager.shared.isVacation(date)
         
-        return !isWeekend && !isHoliday
+        return !isWeekend && !isHoliday && !isVacation
     }
     
-    func nextValidDay() -> Date{
+    func nextValidDay(skippingToday: Bool = false) -> Date{
         let calendar = Calendar.current
-        var candidate = calendar.startOfDay(for: Date())
+        var candidate = referenceDate
         
-        if isValidDay(candidate) && Date.getCurrentMinutes() < 13 * 60 + 40 {
+        if !skippingToday && isValidDay(candidate) && referenceMinutes < closeMinutes {
             return candidate
         }
         
-        for _ in 1...8 {
+        for _ in 1...90 {
             candidate = calendar.date(byAdding: .day, value: 1, to: candidate)!
             if isValidDay(candidate) {
                 return candidate
@@ -155,9 +188,27 @@ class RegistrationViewModel: ObservableObject {
         return candidate
     }
     
-    func nextValidDayMessage() -> String {
-        let next = nextValidDay()
+    func nextValidDayMessage(alreadyCheckedIn: Bool = false) -> String {
         let calendar = Calendar.current
+        
+        if let vacation = VacationManager.shared.currentVacation(for: self.referenceDate){
+            let fmt = DateFormatter()
+            fmt.locale = Locale(identifier: "pt_BR")
+            fmt.dateFormat = "d 'de' MMMM"
+
+            let fimFerias = fmt.string(from: vacation.end)
+            let retorno = nextValidDay(skippingToday: alreadyCheckedIn)
+            
+            if calendar.isDate(retorno, inSameDayAs: vacation.end) ||
+               retorno > vacation.end {
+                let diaRetorno = fmt.string(from: retorno)
+                return "Estamos em férias. A academy volta em \(diaRetorno) — bata seu ponto às 13:40."
+            }
+            
+            return "Estamos em férias, até \(fimFerias)."
+        }
+        
+        let next = nextValidDay(skippingToday: alreadyCheckedIn)
         
         if calendar.isDateInTomorrow(next) {
             return "Volte amanhã às 13:40 para bater seu ponto"
@@ -206,6 +257,7 @@ class RegistrationViewModel: ObservableObject {
         let day   = calendar.component(.day,   from: date)
         let key   = String(format: "%02d-%02d", day, month)
         let holidayName = HolidayManager.shared.getHolidays(for: year)[key]
+        let vacation = VacationManager.shared.currentVacation(for: date)
 
         let group = DispatchGroup()
         var checkIn: CheckInDetail? = nil
@@ -229,7 +281,8 @@ class RegistrationViewModel: ObservableObject {
                 date:    date,
                 checkIn: checkIn,
                 events:  events,
-                holiday: holidayName
+                holiday: holidayName,
+                vacation: vacation
             )
         }
     }

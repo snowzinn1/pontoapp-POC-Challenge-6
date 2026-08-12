@@ -28,6 +28,10 @@ struct EnviromentVariables {
         return Bundle.main.object(forInfoDictionaryKey: "AirtableStudentsApi") as? String ?? ""
     }
     
+    static var urlVacationDates: String {
+        return Bundle.main.object(forInfoDictionaryKey: "AirtableVacationDates") as? String ?? ""
+    }
+    
     static var urlTimelogTable: String {
         return Bundle.main.object(forInfoDictionaryKey: "AirtablePontoApi") as? String ?? ""
     }
