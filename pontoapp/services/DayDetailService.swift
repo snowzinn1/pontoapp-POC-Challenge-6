@@ -73,7 +73,7 @@ extension WebService{
         date: Date,
         completion: @escaping (Result<CheckInDetail?, Error>) -> Void
     ){
-        let calendar = Calendar.current
+        let calendar = Calendar.academy
         let year = calendar.component(.year, from: date)
         let month = calendar.component(.month, from: date)
         let day = calendar.component(.day, from: date)
@@ -135,7 +135,7 @@ extension WebService{
             date: Date,
             completion: @escaping (Result<[EventDetail], Error>) -> Void
         ) {
-            let calendar = Calendar.current
+            let calendar = Calendar.academy
             let year  = calendar.component(.year,  from: date)
             let month = calendar.component(.month, from: date)
             let day   = calendar.component(.day,   from: date)

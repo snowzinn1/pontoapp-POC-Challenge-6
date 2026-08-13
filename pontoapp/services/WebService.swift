@@ -388,7 +388,7 @@ class WebService: ObservableObject {
                 
                 for record in decodedResponse.records {
                     if let date = self.isoFormatter.date(from: record.fields.createdTime) {
-                        let day = Calendar.current.component(.day, from: date)
+                        let day = Calendar.academy.component(.day, from: date)
                         let status = RecordStatus(rawValue: record.fields.status)
                         
                         calendarInfos[day] = status
@@ -485,7 +485,7 @@ class WebService: ObservableObject {
     }
     
     func fetchEventsForMonth(month: Int, year: Int, completion: @escaping (Result<[EventDetail], Error>) -> Void) {
-        let calendar = Calendar.current
+        let calendar = Calendar.academy
         
         guard
             let startOfMonth = calendar.date(from: DateComponents(year: year, month: month, day: 1)),

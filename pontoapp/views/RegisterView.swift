@@ -19,7 +19,7 @@ struct RegisterView: View {
     
     @State private var sliderFrame: CGRect = .zero
     @State private var tutorialVisible: Bool = !UserDefaults.standard.bool(forKey: "hasCompletedTutorial")
-    @State private var windowTicker = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
+    @State private var windowTicker = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
     @EnvironmentObject private var viewModel: RegistrationViewModel
     @ObservedObject var locationManager = LocationManager.shared
@@ -182,11 +182,13 @@ struct RegisterView: View {
             
         } else if !hasCompletedFirstCheckIn || viewModel.checkInWindowState == .open {
             PresenceSlider(profileImage: profileImage, onSwipeRight: {
+                
+            #if !targetEnvironment(simulator)
                 guard bluetoothManager.isBluetoothTurnedOn else {
                     viewModel.showBluetoothAlert = true
                     return
                 }
-                
+            #endif
                 LocalAuthService().authorizeUser { authenticated in
                     guard authenticated else { return }
                     

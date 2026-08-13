@@ -75,7 +75,7 @@ struct CalendarView: View {
                     LazyVGrid(columns: columns, spacing: 8) {
                         ForEach(currentDate.daysOfMonth()) { value in
                             if value.day != -1 {
-                                let isSelected = Calendar.current.isDate(value.date, inSameDayAs: selectedDate)
+                                let isSelected = Calendar.academy.isDate(value.date, inSameDayAs: selectedDate)
                                 let status = daysCheckedIn[value.day]
                                 
                                 ZStack {
@@ -156,13 +156,13 @@ struct CalendarView: View {
         }
         
     func changeMonth(by offset: Int) {
-        if let newDate = Calendar.current.date(byAdding: .month, value: offset, to: currentDate) {
+        if let newDate = Calendar.academy.date(byAdding: .month, value: offset, to: currentDate) {
             currentDate = newDate
         }
     }
     
     func changeMonthAnimated(by offset: Int) {
-        guard let nextDate = Calendar.current.date(byAdding: .month, value: offset, to: currentDate) else { return }
+        guard let nextDate = Calendar.academy.date(byAdding: .month, value: offset, to: currentDate) else { return }
             
         seeRecords(nextDate.month, nextDate.year)
         

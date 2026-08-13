@@ -26,7 +26,7 @@ class VacationManager: ObservableObject {
         
         do {
             let dates = try await webService.fetchVacationDates()
-            let calendar = Calendar.current
+            let calendar = Calendar.academy
             
             intervals = dates.compactMap{ result in
                 guard let title = result.title,
