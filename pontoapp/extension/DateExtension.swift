@@ -59,6 +59,7 @@ extension Date {
         return formatterDate.string(from: Date.now)
     }
     
+    @MainActor
     func daysOfMonth() -> [DateValue] {
         let calendar = Calendar.current
         let year = calendar.component(.year, from: self)
@@ -87,12 +88,13 @@ extension Date {
                 let holidayName = yearHolidays[key] ?? ""
                 let isHoliday = !holidayName.isEmpty
                 let isWeekend = calendar.isDateInWeekend(date)
+                let vacationTitle = VacationManager.shared.vacationTitle(for: date)
                 
                 days.append(DateValue(
                     day: day,
                     date: date,
-                    isDisabledDay: isHoliday || isWeekend,
-                    holiday: holidayName
+                    isDisabledDay: isHoliday || isWeekend || (vacationTitle != nil),
+                    holiday: holidayName.isEmpty ? (vacationTitle ?? "") : holidayName
                 ))
             }
         }

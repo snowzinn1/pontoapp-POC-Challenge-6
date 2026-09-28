@@ -8,7 +8,6 @@
 import Foundation
 
 class WebService: ObservableObject {
-    @Published var events: [Event] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
@@ -25,6 +24,7 @@ class WebService: ObservableObject {
     public let urlTimelogTable = EnviromentVariables.urlTimelogTable
     public let urlEventsTable = EnviromentVariables.urlEventsTable
     public let urlSummaryTable = EnviromentVariables.urlSummaryTable
+    public let urlVacationDates = EnviromentVariables.urlVacationDates
     
     func authenticateStudent(appleID: String, name: String, email: String, completion: @escaping(Result<String, Error>) -> Void) {
         print("Iniciando a busca:")
@@ -636,6 +636,43 @@ class WebService: ObservableObject {
                 DispatchQueue.main.async { completion(.failure(error)) }
             }
         }.resume()
+    }
+    
+    func fetchVacationDates() async throws -> [VacationDate]{
+        guard let url = URL(string: self.urlVacationDates) else {
+            throw URLError(.badURL)
+        }
+        
+        do {
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let vacationsResponse = try JSONDecoder().decode(AirtableResponse<VacationDate>.self, from: data)
+            
+            return vacationsResponse.records.map(\.fields)
+            
+        } catch let error as DecodingError {
+            switch error {
+            case .keyNotFound(let key, let context):
+                print("❌ Chave faltando: '\(key.stringValue)' — \(context.debugDescription)")
+            case .typeMismatch(let type, let context):
+                print("❌ Tipo errado: esperava \(type) em \(context.codingPath.map(\.stringValue))")
+            case .valueNotFound(let type, let context):
+                print("❌ Valor nulo: \(type) em \(context.codingPath.map(\.stringValue))")
+            case .dataCorrupted(let context):
+                print("❌ Dado corrompido: \(context.debugDescription)")
+            @unknown default:
+                print("❌ Erro de decode desconhecido")
+            }
+            throw error
+        }
+        catch(let error){
+            print("O ERRO AO LOCALIZAR AS DATAS DAS FERIAS FOI: \(error.localizedDescription)")
+            throw error
+        }
     }
     
     func updateSummaryStudent(summaryRecord: SummaryRecord, completion: @escaping(Result<Bool, Error>) -> Void) {

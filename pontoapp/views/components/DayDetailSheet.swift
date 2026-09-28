@@ -18,7 +18,8 @@ struct DayDetailSheet: View {
     }
 
     private var isEmpty: Bool {
-        detail.checkIn == nil && detail.events.isEmpty && detail.holiday == nil
+        detail.checkIn == nil && detail.events.isEmpty
+            && detail.holiday == nil && detail.vacation == nil
     }
     
     private var hasJustification: Bool {
@@ -47,8 +48,14 @@ struct DayDetailSheet: View {
                         if let holiday = detail.holiday {
                             HolidayBanner(name: holiday)
                         }
+                        
+                        if let vacation = detail.vacation {
+                            VacationBanner(interval: vacation)
+                        }
 
-                        checkInSection
+                        if detail.vacation == nil && detail.holiday == nil {
+                            checkInSection
+                        }
                         
                         if let checkIn = detail.checkIn, let justify = checkIn.justifyText {
                             justifySection(text: justify)
@@ -147,6 +154,45 @@ struct DayDetailSheet: View {
                 }
             }
         }
+    }
+}
+
+
+private struct VacationBanner: View {
+    let interval: VacationInterval
+
+    private var periodo: String {
+        let fmt = DateFormatter()
+        fmt.locale = Locale(identifier: "pt_BR")
+        fmt.dateFormat = "d 'de' MMM"
+        return "\(fmt.string(from: interval.start)) até \(fmt.string(from: interval.end))"
+    }
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "sun.max.fill")
+                .font(.system(size: 18))
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Férias")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.teal.opacity(0.8))
+                Text(interval.title)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(.white)
+                Text(periodo)
+                    .font(.system(size: 13))
+                    .foregroundStyle(.white.opacity(0.5))
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.teal.opacity(0.12))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.teal.opacity(0.25), lineWidth: 1)
+        )
     }
 }
 

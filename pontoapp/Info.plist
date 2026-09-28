@@ -12,6 +12,8 @@
 	<string>${AIRTABLE_SUMMARY_API_URL}</string>
 	<key>AirtableToken</key>
 	<string>$(AIRTABLE_TOKEN)</string>
+	<key>AirtableVacationDates</key>
+	<string>${AIRTABLE_VACATION_DATES}</string>
 	<key>DropboxAcessToken</key>
 	<string>$(DROPBOX_ACESS_TOKEN )</string>
 	<key>DropboxAppSecret</key>

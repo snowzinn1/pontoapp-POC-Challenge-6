@@ -25,7 +25,8 @@ struct RegisterView: View {
     @ObservedObject var beaconManager = BeaconManager.shared
     @ObservedObject var bluetoothManager = BluetoothManager.shared
     @StateObject var profileController = ProfileController()
-    
+    @StateObject private var vacation = VacationManager.shared
+
     private var profileImage: Image? {
         profileController.profileImage ?? Image(systemName: "person.circle.fill")
     }
@@ -123,6 +124,9 @@ struct RegisterView: View {
             .onAppear {
                 viewModel.resetToCurrentMonth()
                 beaconManager.startMonitoring()
+            }
+            .task{
+                await vacation.getVacationDates()
             }
         }
     }

@@ -66,11 +66,11 @@ struct DashboardView: View {
 }
 
 struct EventCard: View {
-    let event: Event
+    let event: EventFields
     
     var body: some View {
         HStack(spacing: 16) {
-            Image(systemName: event.fields.icon ?? "calendar.fill")
+            Image(systemName: event.icon ?? "calendar.fill")
                 .font(.largeTitle)
                 .foregroundColor(.blue)
                 .frame(width: 60, height: 60)
@@ -78,11 +78,11 @@ struct EventCard: View {
                 .cornerRadius(12)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(event.fields.name)
+                Text(event.name)
                     .font(.headline)
                     .foregroundColor(.white)
                 
-                Text(event.fields.formattedDate)
+                Text(event.formattedDate)
                     .font(.subheadline)
                     .foregroundColor(.white.opacity(0.7))
             }

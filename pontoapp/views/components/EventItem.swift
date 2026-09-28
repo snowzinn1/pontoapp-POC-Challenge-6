@@ -82,7 +82,6 @@ struct EventItem: View {
 }
 
 #Preview {
-    var isNew = true
     let events = [
         EventDetail(
         id: "1",
