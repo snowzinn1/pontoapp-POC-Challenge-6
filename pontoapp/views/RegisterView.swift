@@ -19,13 +19,13 @@ struct RegisterView: View {
     
     @State private var sliderFrame: CGRect = .zero
     @State private var tutorialVisible: Bool = !UserDefaults.standard.bool(forKey: "hasCompletedTutorial")
+    @State private var windowTicker = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
     @EnvironmentObject private var viewModel: RegistrationViewModel
     @ObservedObject var locationManager = LocationManager.shared
     @ObservedObject var beaconManager = BeaconManager.shared
     @ObservedObject var bluetoothManager = BluetoothManager.shared
     @StateObject var profileController = ProfileController()
-    @StateObject private var vacation = VacationManager.shared
 
     private var profileImage: Image? {
         profileController.profileImage ?? Image(systemName: "person.circle.fill")
@@ -170,6 +170,9 @@ struct RegisterView: View {
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 Task { await viewModel.loadCheckInWindowState() }
             }
+            .onReceive(windowTicker) { _ in
+                viewModel.recomputeWindowState()
+            }
             
             Spacer()
         }
@@ -178,15 +181,17 @@ struct RegisterView: View {
     @ViewBuilder
     var checkInContent: some View {
         if viewModel.hasAlreadyCheckedInToday() {
-            CardCheckedInView(text: viewModel.nextValidDayMessage())
+            CardCheckedInView(text: viewModel.nextValidDayMessage(alreadyCheckedIn: true))
             
         } else if !hasCompletedFirstCheckIn || viewModel.checkInWindowState == .open {
             PresenceSlider(profileImage: profileImage, onSwipeRight: {
+                
+            #if !targetEnvironment(simulator)
                 guard bluetoothManager.isBluetoothTurnedOn else {
                     viewModel.showBluetoothAlert = true
                     return
                 }
-                
+            #endif
                 LocalAuthService().authorizeUser { authenticated in
                     guard authenticated else { return }
                     

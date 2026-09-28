@@ -135,12 +135,15 @@ extension LocationManager: CLLocationManagerDelegate{
         
         if region.identifier == "Academy"{
             Task{
-                guard let serverTime = try? await TimeService.shared.fetchServerTime() else {
+                guard let serverDate = try? await TimeService.shared.fetchServerTime() else {
                     if isOnTime() { sendUserNotification() }
                     return
                 }
                 
-                let totalMinutes = serverTime.hour * 60 + serverTime.minute
+                let calendar = Calendar.academy
+                let totalMinutes = calendar.component(.hour, from: serverDate) * 60
+                                 + calendar.component(.minute, from: serverDate)
+
                 let inicio = 13 * 60 + 40  // 13:40
                 let fim    = 14 * 60 + 20  // 14:20
                 

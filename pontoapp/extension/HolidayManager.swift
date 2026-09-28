@@ -21,7 +21,7 @@ class HolidayManager {
         }
         
         var holidays: [String: String] = [:]
-        let calendar = Calendar.current
+        let calendar = Calendar.academy
         
         let baseHolidays = getBaseHolidays(for: year)
         
@@ -58,7 +58,7 @@ class HolidayManager {
     
     private func getBaseHolidays(for year: Int) -> [(date: Date, name: String)]{
         var base: [(date: Date, name: String)] = []
-        let calendar = Calendar.current
+        let calendar = Calendar.academy
         
         let fixedHolidays = [
             (1, 1, "Ano Novo"),
@@ -86,7 +86,7 @@ class HolidayManager {
     }
     
     private func dateToKey(_ date: Date) -> String {
-        let calendar = Calendar.current
+        let calendar = Calendar.academy
         let d = calendar.component(.day, from: date)
         let m = calendar.component(.month, from: date)
         return String(format: "%02d-%02d", d, m)
@@ -110,7 +110,7 @@ class HolidayManager {
         let day = ((h + l - 7 * m + 114) % 31) + 1
         
         let comps = DateComponents(year: year, month: month, day: day)
-        let calendar = Calendar.current
+        let calendar = Calendar.academy
         guard let easter = calendar.date(from: comps) else { return [] }
         
         let carnivalMon = calendar.date(byAdding: .day, value: -48, to: easter)!

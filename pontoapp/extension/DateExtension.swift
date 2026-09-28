@@ -17,19 +17,19 @@ struct DateValue: Identifiable{
 
 extension Date {
     var day: Int {
-        return Calendar.current.component(.day, from: self)
+        return Calendar.academy.component(.day, from: self)
     }
     
     var year: Int {
-        return Calendar.current.component(.year, from: self)
+        return Calendar.academy.component(.year, from: self)
     }
         
     var month: Int {
-        return Calendar.current.component(.month, from: self)
+        return Calendar.academy.component(.month, from: self)
     }
     
     static func classDurationInYears() -> String {
-        let currentYear = Calendar.current.component(.year, from: Date())
+        let currentYear = Calendar.academy.component(.year, from: Date())
         let evenYear = currentYear % 2
         
         return evenYear == 0 ? "\(currentYear) - \(currentYear + 1)" : "\(currentYear - 1) - \(currentYear)"
@@ -45,7 +45,7 @@ extension Date {
     
     static func getCurrentMinutes() -> Int{
         let time = Date()
-        let calendar = Calendar.current
+        let calendar = Calendar.academy
         let hour = calendar.component(.hour, from: time)
         let minute = calendar.component(.minute, from: time)
         return hour * 60 + minute
@@ -61,7 +61,7 @@ extension Date {
     
     @MainActor
     func daysOfMonth() -> [DateValue] {
-        let calendar = Calendar.current
+        let calendar = Calendar.academy
         let year = calendar.component(.year, from: self)
         
         let yearHolidays = HolidayManager.shared.getHolidays(for: year)
