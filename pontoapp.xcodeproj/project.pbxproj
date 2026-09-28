@@ -363,11 +363,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-<<<<<<< HEAD
-				MARKETING_VERSION = 1.2.5;
-=======
 				MARKETING_VERSION = 1.2.7;
->>>>>>> main
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.joaocarloslima.pontoapp2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -413,11 +409,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-<<<<<<< HEAD
-				MARKETING_VERSION = 1.2.5;
-=======
+                
 				MARKETING_VERSION = 1.2.7;
->>>>>>> main
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.joaocarloslima.pontoapp2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
