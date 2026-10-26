@@ -125,9 +125,9 @@ struct RegisterView: View {
                 viewModel.resetToCurrentMonth()
                 beaconManager.startMonitoring()
             }
-            .task{
-                await vacation.getVacationDates()
-            }
+//            .task{
+//                await vacation.getVacationDates()
+//            }
         }
     }
     
@@ -191,6 +191,7 @@ struct RegisterView: View {
                     viewModel.showBluetoothAlert = true
                     return
                 }
+                //preciso verificar esse codigo
             #endif
                 LocalAuthService().authorizeUser { authenticated in
                     guard authenticated else { return }

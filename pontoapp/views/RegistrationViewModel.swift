@@ -228,8 +228,6 @@ class RegistrationViewModel: ObservableObject {
             return "Estamos em férias, até \(fimFerias)."
         }
         
-        let next = nextValidDay()
-        
         if calendar.isDateInTomorrow(next) {
             return "Volte amanhã às 13:40 para bater seu ponto"
         }
